@@ -14,64 +14,50 @@ export default function Home() {
   const questions = [
     { 
       id: 'topLeft', 
-      text: 'Cry', 
+      text: 'Sleep', 
       audioSrc: '/audio/a.mp3',
       position: 'top-4 left-4',
       action: () => {
+        if (!modelRef.current) {
+          console.error('Model is not loaded');
+          return;
+        }
         if (modelRef.current) {
           try {
-            modelRef.current.internalModel.coreModel.setParameterValueById('Param12', 1); // cry parameter
-            modelRef.current.internalModel.coreModel.setParameterValueById('Part16', 1); // cry part
-      
-
-            modelRef.current.expression('cry');
             
-            setTimeout(() => {
-              if (modelRef.current) {
-                modelRef.current.internalModel.coreModel.setParameterValueById('Param12', 0);
-                modelRef.current.internalModel.coreModel.setParameterValueById('Part16', 0);
-              }
-            }, 1383); // Match the motion duration
+            modelRef.current.motion('Sleep');
+
           } catch (error) {
-            console.error('Failed to trigger cry motion:', error);
+            console.error('Failed to trigger sleep motion:', error);
           }
         }
       }
     },
     { 
       id: 'topRight', 
-      text: 'Happy', 
+      text: 'Eat', 
       audioSrc: '/audio/happy.mp3',
       position: 'top-4 right-4',
       action: () => {
         if (modelRef.current) {
-          modelRef.current.internalModel.coreModel.setParameterValueById('ParamEyeLSmile', 1);
-          modelRef.current.internalModel.coreModel.setParameterValueById('ParamEyeRSmile', 1);
-          
-          setTimeout(() => {
-            if (modelRef.current) {
-              modelRef.current.internalModel.coreModel.setParameterValueById('ParamEyeLSmile', 0);
-              modelRef.current.internalModel.coreModel.setParameterValueById('ParamEyeRSmile', 0);
-            }
-          }, 3000);
+          modelRef.current.motion('Eat');
         }
       }
     },
     { 
       id: 'bottomLeft', 
-      text: 'Blush', 
+      text: 'Greet', 
       audioSrc: '/audio/blush.mp3',
       position: 'bottom-4 left-4',
       action: () => {
         if (modelRef.current) {
-          modelRef.current.internalModel.coreModel.setParameterValueById('ParamCheek', 1);
-          
-          setTimeout(() => {
-            if (modelRef.current) {
-              modelRef.current.internalModel.coreModel.setParameterValueById('ParamCheek', 0);
-            }
-          }, 3000);
-        }
+          try {
+            
+            modelRef.current.motion('Greet');
+
+          } catch (error) {
+            console.error('Failed to trigger Greet motion:', error);
+          }        }
       }
     },
     { 
@@ -81,15 +67,14 @@ export default function Home() {
       position: 'bottom-4 right-4',
       action: () => {
         if (modelRef.current) {
-          // Trigger angry expression
-          modelRef.current.internalModel.coreModel.setParameterValueById('Param9', 1); // angry parameter
-          modelRef.current.internalModel.coreModel.setParameterValueById('Part4', 1); // angry part
+          modelRef.current.expression('WhitePonytail');
+          
           
           // Reset after 3 seconds
           setTimeout(() => {
             if (modelRef.current) {
-              modelRef.current.internalModel.coreModel.setParameterValueById('Param9', 0);
-              modelRef.current.internalModel.coreModel.setParameterValueById('Part4', 0);
+              modelRef.current.expression('Coat');
+
             }
           }, 3000);
         }
@@ -157,10 +142,22 @@ export default function Home() {
     const loadModel = async () => {
       try {
         const model = await (window as any).PIXI.live2d.Live2DModel.from(
-          '/models/model_bear/bear_Pajama.model3.json'
+          '/models/model_bear/bear_Pajama.model3.json',{
+            cdi: '/models/model_bear/bear_Pajama.cdi3.json'
+          }
         );
+        model.internalModel.motionManager.motionPreload = true; 
+        console.log('Preloading motions:', model.internalModel.motionManager.motionPreload);
+        console.log('Available motions:', model.internalModel.motionManager.definitions);
+        // Log motion groups
+        console.log('Motion groups:', model.internalModel.motionManager.groups);
+
+        // Log motion files
+        console.log('Motion files:', model.internalModel.motionManager.motionData);
+
+
+
         modelRef.current = model;
-        
         model.scale.set(0.25);
         model.anchor.set(0.5);
         model.position.set(app.screen.width / 2, app.screen.height / 2);

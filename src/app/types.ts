@@ -1,21 +1,36 @@
+declare global {
+  interface Window {
+    webkitAudioContext: typeof AudioContext;
+  }
+}
 
-   
-   export interface Live2DModel {
-    scale: { set: (scale: number) => void };
-    anchor: { set: (anchor: number) => void };
-    position: { set: (x: number, y: number) => void };
-    buttonMode: boolean;
-    interactive: boolean;
-    draggable: boolean;
-    on: (event: string, callback: (areas: string[]) => void) => void;
-    motion: (name: string) => void;
-    expression: (name: string) => void;
-    internalModel?: {
-      parameters?: {
-        values: {
-          ParamMouthOpenY: number;
-        };
+export interface Live2DModel {
+  internalModel: {
+    coreModel: {
+      setParameterValueById: (id: string, value: number) => void;
+      parameters: Array<{ id: string }>;
+    };
+    motionGroups: Record<string, any>;
+    parameters?: {
+      values: {
+        ParamMouthOpenY: number;
+        [key: string]: number;
       };
     };
-   }
+  };
+  scale: {
+    set: (scale: number) => void;
+  };
+  anchor: {
+    set: (anchor: number) => void;
+  };
+  position: {
+    set: (x: number, y: number) => void;
+  };
+  buttonMode: boolean;
+  interactive: boolean;
+  draggable: boolean;
+  expression: (name: string) => void;
+  motion: (name: any) => void;
+}
    
