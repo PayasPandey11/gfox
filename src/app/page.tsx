@@ -1,101 +1,220 @@
-import Image from "next/image";
+// src/app/page.tsx
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import Script from 'next/script';
+import type { Live2DModel} from './types';
+
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const modelRef = useRef<Live2DModel | null>(null);
+  const [activeButton, setActiveButton] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  const questions = [
+    { 
+      id: 'topLeft', 
+      text: 'Cry', 
+      audioSrc: '/audio/a.mp3',
+      position: 'top-4 left-4',
+      action: () => {
+        if (modelRef.current) {
+          try {
+            modelRef.current.internalModel.coreModel.setParameterValueById('Param12', 1); // cry parameter
+            modelRef.current.internalModel.coreModel.setParameterValueById('Part16', 1); // cry part
+      
+
+            modelRef.current.expression('cry');
+            
+            setTimeout(() => {
+              if (modelRef.current) {
+                modelRef.current.internalModel.coreModel.setParameterValueById('Param12', 0);
+                modelRef.current.internalModel.coreModel.setParameterValueById('Part16', 0);
+              }
+            }, 1383); // Match the motion duration
+          } catch (error) {
+            console.error('Failed to trigger cry motion:', error);
+          }
+        }
+      }
+    },
+    { 
+      id: 'topRight', 
+      text: 'Happy', 
+      audioSrc: '/audio/happy.mp3',
+      position: 'top-4 right-4',
+      action: () => {
+        if (modelRef.current) {
+          modelRef.current.internalModel.coreModel.setParameterValueById('ParamEyeLSmile', 1);
+          modelRef.current.internalModel.coreModel.setParameterValueById('ParamEyeRSmile', 1);
+          
+          setTimeout(() => {
+            if (modelRef.current) {
+              modelRef.current.internalModel.coreModel.setParameterValueById('ParamEyeLSmile', 0);
+              modelRef.current.internalModel.coreModel.setParameterValueById('ParamEyeRSmile', 0);
+            }
+          }, 3000);
+        }
+      }
+    },
+    { 
+      id: 'bottomLeft', 
+      text: 'Blush', 
+      audioSrc: '/audio/blush.mp3',
+      position: 'bottom-4 left-4',
+      action: () => {
+        if (modelRef.current) {
+          modelRef.current.internalModel.coreModel.setParameterValueById('ParamCheek', 1);
+          
+          setTimeout(() => {
+            if (modelRef.current) {
+              modelRef.current.internalModel.coreModel.setParameterValueById('ParamCheek', 0);
+            }
+          }, 3000);
+        }
+      }
+    },
+    { 
+      id: 'bottomRight', 
+      text: 'Angry', 
+      audioSrc: '/audio/angry.mp3',
+      position: 'bottom-4 right-4',
+      action: () => {
+        if (modelRef.current) {
+          // Trigger angry expression
+          modelRef.current.internalModel.coreModel.setParameterValueById('Param9', 1); // angry parameter
+          modelRef.current.internalModel.coreModel.setParameterValueById('Part4', 1); // angry part
+          
+          // Reset after 3 seconds
+          setTimeout(() => {
+            if (modelRef.current) {
+              modelRef.current.internalModel.coreModel.setParameterValueById('Param9', 0);
+              modelRef.current.internalModel.coreModel.setParameterValueById('Part4', 0);
+            }
+          }, 3000);
+        }
+      }
+    }
+  ];
+
+  const playAudio = (audioSrc: string, buttonId: string, action?: () => void) => {
+    if (!modelRef.current) return;
+  
+    const audio = new Audio(audioSrc);
+    setActiveButton(buttonId);
+  
+    // Create audio context for lip-sync analysis
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    const audioSource = audioContext.createMediaElementSource(audio);
+    audioSource.connect(analyser);
+    analyser.connect(audioContext.destination);
+  
+    // Setup lip-sync parameter animation
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+  
+    const animateLipSync = () => {
+      analyser.getByteFrequencyData(dataArray);
+      
+      // Calculate average frequency amplitude
+      const average = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
+      
+      // Map amplitude to lip-sync parameters
+      if (modelRef.current) {
+        modelRef.current.internalModel.coreModel.setParameterValueById(
+          'ParamMouthOpenY', 
+          average / 128 // Normalize to 0-1 range
+        );
+      }
+  
+      if (!audio.ended) {
+        requestAnimationFrame(animateLipSync);
+      } else {
+        // Reset mouth parameter when audio ends
+        if (modelRef.current) {
+          modelRef.current.internalModel.coreModel.setParameterValueById('ParamMouthOpenY', 0);
+        }
+        setActiveButton(null);
+      }
+    };
+  
+    audio.play();
+    if (action) action();
+    animateLipSync();
+  };
+
+  useEffect(() => {
+    const app = new (window as any).PIXI.Application({
+      view: canvasRef.current,
+      backgroundColor: 0x000000,
+      width: window.innerWidth * 0.85,
+      height: window.innerHeight,
+      antialias: true
+    });
+
+    const loadModel = async () => {
+      try {
+        const model = await (window as any).PIXI.live2d.Live2DModel.from(
+          '/models/model_bear/bear_Pajama.model3.json'
+        );
+        modelRef.current = model;
+        
+        model.scale.set(0.25);
+        model.anchor.set(0.5);
+        model.position.set(app.screen.width / 2, app.screen.height / 2);
+        
+        model.buttonMode = true;
+        model.interactive = true;
+        model.draggable = true;
+
+        app.stage.addChild(model);
+
+        const onResize = () => {
+          app.renderer.resize(window.innerWidth * 0.85, window.innerHeight);
+          model.position.set(app.screen.width / 2, app.screen.height / 2);
+        };
+        
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+      } catch (e) {
+        console.error('Failed to load model:', e);
+      }
+    };
+
+    loadModel();
+    return () => {
+      app.destroy(true);
+    };
+  }, []);
+
+  return (
+    <main className="flex min-h-screen bg-black">
+      {questions.map((question) => (
+        <button 
+          key={question.id}
+          onClick={() => playAudio(question.audioSrc, question.id, question.action)}
+          className={`
+            fixed w-48 p-3 rounded-lg text-white transition-all duration-300 
+            ${question.position}
+            ${activeButton === question.id 
+              ? 'bg-blue-700 scale-105' 
+              : 'bg-blue-500 hover:bg-blue-600'}
+          `}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          {question.text}
+        </button>
+      ))}
+      
+      <div className="w-[85%]">
+        <canvas ref={canvasRef} className="h-screen" />
+      </div>
+      
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.3.3/pixi.min.js" strategy="beforeInteractive" />
+      <Script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js" strategy="beforeInteractive" />
+      <Script src="https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js" strategy="beforeInteractive" />
+      <Script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/index.min.js" strategy="beforeInteractive" />
+    </main>
   );
 }
