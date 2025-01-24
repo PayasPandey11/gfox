@@ -53,7 +53,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen bg-black">
-      {QUESTIONS.map((question) => (
+      {/* {QUESTIONS.map((question) => (
         <InteractionButton
           key={question.id}
           id={question.id}
@@ -66,10 +66,10 @@ export default function Home() {
             () => question.action(modelRef.current) // Pass modelRef.current to the action
           )}
         />
-      ))}
+      ))} */}
       
-      <div className="w-[85%]">
-        <canvas ref={canvasRef} className="h-screen" />
+      <div className="w-[40%] h-[40%]">
+        <canvas ref={canvasRef} className="w-full h-full block"   />
       </div>
       
       <Live2DScripts/>

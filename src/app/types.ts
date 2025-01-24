@@ -10,6 +10,7 @@ export type Live2DModel = {
   internalModel: {
     coreModel: {
       setParameterValueById: (param: string, value: number) => void;
+      stopMotion: () => void;
     };
     motionManager: {
       motionPreload: boolean;

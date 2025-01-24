@@ -16,133 +16,78 @@
 	  "Physics": "bear Pajama.physics3.json",
 	  "DisplayInfo": "bear Pajama.cdi3.json",
 	  "Motions": {
-	
 		"Cry": [
-		  {
-			"File": "bearcry.motion3.json"
-		  }
+		  { "File": "bearcry.motion3.json" }
 		],
 		"Eat": [
-		  {
-			"File": "eat.motion3.json"
-		  }
+		  { "File": "eat.motion3.json" }
 		],
 		"Sleep": [
-		  {
-			"File": "sleep.motion3.json"
-		  }
+		  { "File": "sleep.motion3.json" }
 		],
 		"Greet": [
-        {
-          "File": "greet.motion3.json"
-        }
-      ]
+		  { "File": "greet.motion3.json" }
+		]
 	  },
 	  "Expressions": [
+		{ "Name": "Cry", "File": "cry.exp3.json" },
+		{ "Name": "Anger", "File": "anger.exp3.json" },
+		{ "Name": "Love", "File": "love.exp3.json" },
+		{ "Name": "Red", "File": "red.exp3.json" },
+		{ "Name": "No", "File": "no.exp3.json" },
+		{ "Name": "Bear", "File": "bear.exp3.json" },
+		{ "Name": "BlackBraids", "File": "Black braids.exp3.json" },
+		{ "Name": "DrumMouth", "File": "Drum mouth.exp3.json" },
+		{ "Name": "PenFingers", "File": "Pen fingers.exp3.json" },
+		{ "Name": "SnotBubbles", "File": "Snot bubbles.exp3.json" },
+		{ "Name": "WhiteBoard", "File": "White board.exp3.json" },
+		{ "Name": "WhiteHairBraids", "File": "White hair braids.exp3.json" },
+		{ "Name": "WhiteHair", "File": "White hair.exp3.json" },
+		{ "Name": "WhitePonytail", "File": "White ponytail.exp3.json" },
+		{ "Name": "Box", "File": "box.exp3.json" },
+		{ "Name": "Coat", "File": "coat.exp3.json" },
+		{ "Name": "Ear", "File": "ear.exp3.json" },
+		{ "Name": "EatEat", "File": "eat eat.exp3.json" },
+		{ "Name": "Game", "File": "game.exp3.json" },
+		{ "Name": "Glasses", "File": "glasses.exp3.json" },
+		{ "Name": "Hat", "File": "hat.exp3.json" },
+		{ "Name": "Mouse", "File": "mouse.exp3.json" },
+		{ "Name": "Pillow", "File": "pillow.exp3.json" }
+	  ]
+	},
+	"HitAreas": [
 		{
-		  "Name": "Cry",
-		  "File": "cry.exp3.json"
+		  "Name": "Head",
+		  "Id": "HitArea_Head",
+		  "PartId": "Part18"
 		},
 		{
-		  "Name": "Anger",
-		  "File": "anger.exp3.json"
+		  "Name": "Body",
+		  "Id": "HitArea_Body",
+		  "PartId": "Part54"
 		},
 		{
-		  "Name": "Love",
-		  "File": "love.exp3.json"
-		},
-		{
-		  "Name": "Red",
-		  "File": "red.exp3.json"
-		},
-		{
-		  "Name": "No",
-		  "File": "no.exp3.json"
-		},
-		{
-		  "Name": "Bear",
-		  "File": "bear.exp3.json"
-		},
-		{
-		  "Name": "BlackBraids",
-		  "File": "Black braids.exp3.json"
-		},
-		{
-		  "Name": "DrumMouth",
-		  "File": "Drum mouth.exp3.json"
-		},
-		{
-		  "Name": "PenFingers",
-		  "File": "Pen fingers.exp3.json"
-		},
-		{
-		  "Name": "SnotBubbles",
-		  "File": "Snot bubbles.exp3.json"
-		},
-		{
-		  "Name": "WhiteBoard",
-		  "File": "White board.exp3.json"
-		},
-		{
-		  "Name": "WhiteHairBraids",
-		  "File": "White hair braids.exp3.json"
-		},
-		{
-		  "Name": "WhiteHair",
-		  "File": "White hair.exp3.json"
-		},
-		{
-		  "Name": "WhitePonytail",
-		  "File": "White ponytail.exp3.json"
-		},
-		{
-		  "Name": "Box",
-		  "File": "box.exp3.json"
-		},
-		{
-		  "Name": "Coat",
-		  "File": "coat.exp3.json"
+		  "Name": "Hand",
+		  "Id": "HitArea_Hand",
+		  "PartId": "Part38"
 		},
 		{
 		  "Name": "Ear",
-		  "File": "ear.exp3.json"
-		},
-		{
-		  "Name": "EatEat",
-		  "File": "eat eat.exp3.json"
-		},
-		{
-		  "Name": "Game",
-		  "File": "game.exp3.json"
-		},
-		{
-		  "Name": "Glasses",
-		  "File": "glasses.exp3.json"
-		},
-		{
-		  "Name": "Hat",
-		  "File": "hat.exp3.json"
-		},
-		{
-		  "Name": "Mouse",
-		  "File": "mouse.exp3.json"
-		},
-		{
-		  "Name": "Pillow",
-		  "File": "pillow.exp3.json"
+		  "Id": "HitArea_Ear",
+		  "PartId": "Part31" 
 		}
-	  ]
-	},
+	  ],
+	
 	"Groups": [
 	  {
 		"Target": "Parameter",
 		"Name": "EyeBlink",
-		"Ids": []
+		"Ids": ["ParamEyeLOpen", "ParamEyeROpen"] 
 	  },
 	  {
 		"Target": "Parameter",
 		"Name": "LipSync",
-		"Ids": []
+		"Ids": ["ParamMouthOpenY"] 
 	  }
 	]
   }
