@@ -70,7 +70,7 @@ export default function Home() {
   ))} */}
 
   {/* Canvas Container */}
-  <div className="w-[40%] h-[40%] absolute right-0 top-1/2 -translate-y-1/2 overflow-hidden">
+  <div className="w-[50%] h-[50%] absolute right-0 top-1/2 -translate-y-1/2 overflow-hidden">
     <canvas ref={canvasRef} className="w-full h-full " />
   </div>
 

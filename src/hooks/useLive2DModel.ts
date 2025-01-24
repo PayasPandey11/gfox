@@ -14,8 +14,9 @@ const useLive2DModel = (canvasRef: React.RefObject<HTMLCanvasElement | null>) =>
       backgroundColor: 0xffffff,
       backgroundAlpha: 0,// Ensures full transparency
       antialias: true,
-      width: 1000,
-      height: 1000,
+      width: window.outerWidth,
+      height: window.outerHeight,
+      resolution: 2,
     });
 
     const loadModel = async () => {
@@ -59,7 +60,7 @@ const useLive2DModel = (canvasRef: React.RefObject<HTMLCanvasElement | null>) =>
           console.log(event.data.global.x, event.data.global.y);
           const hairTyoes = ["WhiteHairBraids","BlackBraids","WhiteHair","WhitePonytail","Hat"];
           const facials = ["Cry","Anger","Love","Red","No"];
-          const acts = ["Game","Game","Game","EatEat","Bear","PenFingers"];
+          const acts = ["Game","Game"," Game","EatEat","Bear","PenFingers"];
           const setting = ["Pillow","Box","Coat"];
           const all_expressions = [...hairTyoes, ...facials, ...acts, ...setting];
           const select_random_expression = all_expressions[Math.floor(Math.random() * all_expressions.length)];
