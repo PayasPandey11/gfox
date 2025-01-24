@@ -4,33 +4,25 @@ declare global {
   }
 }
 
-export interface Live2DModel {
+export type Live2DModel = {
+  motion: (name: string) => void;
+  expression: (name: string) => void;
   internalModel: {
     coreModel: {
-      setParameterValueById: (id: string, value: number) => void;
-      parameters: Array<{ id: string }>;
+      setParameterValueById: (param: string, value: number) => void;
     };
-    motionGroups: Record<string, any>;
-    parameters?: {
-      values: {
-        ParamMouthOpenY: number;
-        [key: string]: number;
-      };
+    motionManager: {
+      motionPreload: boolean;
+      definitions: any;
+      groups: any;
+      motionData: any;
     };
   };
-  scale: {
-    set: (scale: number) => void;
-  };
-  anchor: {
-    set: (anchor: number) => void;
-  };
-  position: {
-    set: (x: number, y: number) => void;
-  };
+  scale: { set: (scale: number) => void };
+  anchor: { set: (position: number) => void };
+  position: { set: (position: { x: number; y: number }) => void };
   buttonMode: boolean;
   interactive: boolean;
   draggable: boolean;
-  expression: (name: string) => void;
-  motion: (name: any) => void;
-}
+};
    
