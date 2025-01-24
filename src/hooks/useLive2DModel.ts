@@ -11,7 +11,8 @@ const useLive2DModel = (canvasRef: React.RefObject<HTMLCanvasElement | null>) =>
 
     const app = new (window as any).PIXI.Application({
       view: canvasRef.current,
-      backgroundColor: 0x000000,
+      backgroundColor: 0xffffff,
+      backgroundAlpha: 0,// Ensures full transparency
       antialias: true,
       width: 1000,
       height: 1000,
@@ -41,7 +42,7 @@ const useLive2DModel = (canvasRef: React.RefObject<HTMLCanvasElement | null>) =>
 
         modelRef.current = model;
 
-        model.scale.set(0.21);
+        model.scale.set(0.25);
         model.anchor.set(0.5);
         model.position.set(app.screen.width/2, app.screen.height/2);
         model.buttonMode = true;

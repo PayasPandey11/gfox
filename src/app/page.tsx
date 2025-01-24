@@ -52,27 +52,30 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen bg-black">
-      {/* {QUESTIONS.map((question) => (
-        <InteractionButton
-          key={question.id}
-          id={question.id}
-          text={question.text}
-          position={question.position}
-          isActive={activeButton === question.id}
-          onClick={() => playAudio(
-            question.audioSrc, 
-            question.id, 
-            () => question.action(modelRef.current) // Pass modelRef.current to the action
-          )}
-        />
-      ))} */}
-      
-      <div className="w-[40%] h-[40%]">
-        <canvas ref={canvasRef} className="w-full h-full block"   />
-      </div>
-      
-      <Live2DScripts/>
-    </main>
+    <main className="flex min-h-screen relative">
+  {/* Interaction Buttons (commented out) */}
+  {/* {QUESTIONS.map((question) => (
+    <InteractionButton
+      key={question.id}
+      id={question.id}
+      text={question.text}
+      position={question.position}
+      isActive={activeButton === question.id}
+      onClick={() => playAudio(
+        question.audioSrc, 
+        question.id, 
+        () => question.action(modelRef.current) // Pass modelRef.current to the action
+      )}
+    />
+  ))} */}
+
+  {/* Canvas Container */}
+  <div className="w-[40%] h-[40%] absolute right-0 top-1/2 -translate-y-1/2 overflow-hidden">
+    <canvas ref={canvasRef} className="w-full h-full " />
+  </div>
+
+  {/* Live2D Scripts */}
+  <Live2DScripts />
+</main>
   );
 }
