@@ -57,13 +57,24 @@ const useLive2DModel = (canvasRef: React.RefObject<HTMLCanvasElement | null>) =>
           console.log("event",event);
           console.log("model",model.isHit);
           console.log(event.data.global.x, event.data.global.y);
-          const hitAreas = model.hitAreas;
-          console.log("hitAreas",hitAreas);
-          const hitArea = model.internalModel.hitTest(event.data.global.x, event.data.global.y);
-          if (hitArea) {
-            console.log('Hit area clicked:', hitArea);
-            triggerMotionOrExpression(hitArea);
+          const hairTyoes = ["WhiteHairBraids","BlackBraids","WhiteHair","WhitePonytail","Hat"];
+          const facials = ["Cry","Anger","Love","Red","No"];
+          const acts = ["Game","Game","Game","EatEat","Bear","PenFingers"];
+          const setting = ["Pillow","Box","Coat"];
+          const all_expressions = [...hairTyoes, ...facials, ...acts, ...setting];
+          const select_random_expression = all_expressions[Math.floor(Math.random() * all_expressions.length)];
+          const all_motions = ["Sleep","Eat"];
+          const select_random_motion = all_motions[Math.floor(Math.random() * all_motions.length)];
+          const motion_or_expression = Math.random() < 0.5 ? "expression" : "motion";
+          if (motion_or_expression === "expression") {
+            console.log("select_random_expression",select_random_expression);
+            model.expression(select_random_expression);
+          } else {
+            console.log("select_random_motion",select_random_motion);
+            // model.motion(select_random_motion);
           }
+          
+
         });
 
         app.stage.addChild(model);
