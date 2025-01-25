@@ -1,5 +1,9 @@
 import { useEffect, useRef } from 'react';
 import type { Live2DModel } from '../app/types';
+import { Renderer } from '@pixi/core';
+import { InteractionManager } from '@pixi/interaction';
+
+Renderer.registerPlugin('interaction', InteractionManager);
 const useLive2DModel = (canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
   const modelRef = useRef<Live2DModel | null>(null);
 
@@ -45,18 +49,33 @@ const useLive2DModel = (canvasRef: React.RefObject<HTMLCanvasElement | null>) =>
 
         model.scale.set(0.25);
         model.anchor.set(0.5);
-        model.position.set(app.screen.width/2, app.screen.height/2);
+        model.position.set(app.screen.width-600, app.screen.height/2);
         model.buttonMode = true;
         model.interactive = true;
         model.draggable = true;
         model.hitAreas = jsonData.HitAreas;
 
-        
+        model.on('hit', (hitAreaNames: any) => {
+          console.log("hitAreaNames",hitAreaNames);
+          if (hitAreaNames.includes('body')) {
+              // body is hit
+          }
+      });
 
         // Add hit area interaction
         model.on('pointerdown', (event: any) => {
+        // Get the click position in world space
+        const worldX = event.data.global.x;
+        const worldY = event.data.global.y;
+
+        // Convert the click position to model space
+        const modelPosition = model.toModelPosition({ x: worldX, y: worldY });
+
+        // Log the position in model space
+        console.log("Model Position:", modelPosition);
+          console.log("hitt",model.hitTest(event.data.global.x, event.data.global.y));
           console.log("event",event);
-          console.log("model",model.isHit);
+          console.log("model",model.internalModel.hitTest(event.data.global.x, event.data.global.y));
           console.log(event.data.global.x, event.data.global.y);
           const hairTyoes = ["WhiteHairBraids","BlackBraids","WhiteHair","WhitePonytail","Hat"];
           const facials = ["Cry","Anger","Love","Red","No"];
@@ -82,7 +101,7 @@ const useLive2DModel = (canvasRef: React.RefObject<HTMLCanvasElement | null>) =>
 
         const onResize = () => {
           model.position.set(app.screen.width/2, app.screen.height/2);
-          //app.renderer.resize(window.outerWidth, window.outerHeight);
+          app.renderer.resize(window.outerWidth, window.outerHeight);
          
         };
 
