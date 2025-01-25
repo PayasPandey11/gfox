@@ -4,10 +4,14 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { OpenRouter } from '@/app/openrouter';
 import { playAudio } from '@/app/audio';
 
+
 import Live2DScripts from '@/components/Live2DScripts';
+import useLive2DModel from '@/hooks/useLive2DModel';
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const modelRef = useLive2DModel(canvasRef);
+
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
