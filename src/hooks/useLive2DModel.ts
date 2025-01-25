@@ -4,130 +4,90 @@ import { Renderer } from '@pixi/core';
 import { InteractionManager } from '@pixi/interaction';
 
 Renderer.registerPlugin('interaction', InteractionManager);
+
 const useLive2DModel = (canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
   const modelRef = useRef<Live2DModel | null>(null);
 
   useEffect(() => {
-
-
-
-  
-
     const app = new (window as any).PIXI.Application({
       view: canvasRef.current,
-      backgroundColor: 0xffffff,
-      backgroundAlpha: 0,// Ensures full transparency
+      transparent: true,
       antialias: true,
-      width: window.outerWidth,
-      height: window.outerHeight,
-      resolution: 2,
+      resizeTo: window,
+      autoDensity: true,
+      resolution: window.devicePixelRatio || 1,
     });
 
     const loadModel = async () => {
       try {
-        const cdiResponse = await fetch('/models/model_bear/bear Pajama.cdi3.json');
-        const cdiData = await cdiResponse.json();
-        const jsonResponse = await fetch('/models/model_bear/bear_Pajama.model3.json');
-        const jsonData = await jsonResponse.json();
-        console.log(cdiData);
-        console.log(jsonData);
-        console.log(jsonData.HitAreas);
+        const [cdiData, jsonData] = await Promise.all([
+          fetch('/models/model_bear/bear Pajama.cdi3.json').then(res => res.json()),
+          fetch('/models/model_bear/bear_Pajama.model3.json').then(res => res.json())
+        ]);
+
         const model = await (window as any).PIXI.live2d.Live2DModel.from(
           '/models/model_bear/bear_Pajama.model3.json',
           { 
-            settings: {
-              cdi: cdiData  // Inject CDI data directly
-            },
+            settings: { cdi: cdiData },
             hitAreas: jsonData.HitAreas,
-            textureOption: {
-              scale: 2 // Renders textures at 2x resolution
-            }
           }
         );
 
         modelRef.current = model;
 
-        model.scale.set(0.25);
-        model.anchor.set(0.5);
-        model.position.set(app.screen.width-600, app.screen.height/2);
-        model.buttonMode = true;
-        model.interactive = true;
-        model.draggable = true;
-        model.hitAreas = jsonData.HitAreas;
+        // Calculate position with chatbox offset
+        const calculatePosition = () => {
+          const chatboxWidth = 25 * 16; // Convert 25rem to pixels (1rem = 16px)
+          const effectiveWidth = app.screen.width - chatboxWidth;
+          return {
+            x: effectiveWidth / 2,
+            y: app.screen.height / 2
+          };
+        };
 
-        model.on('hit', (hitAreaNames: any) => {
-          console.log("hitAreaNames",hitAreaNames);
-          if (hitAreaNames.includes('body')) {
-              // body is hit
-          }
-      });
+        // Scaling calculations
+        const calculateScale = () => {
+          const padding = 80;
+          const chatboxWidth = 25 * 16; // 25rem in pixels
+          const maxWidth = (app.screen.width - chatboxWidth) - padding;
+          const maxHeight = app.screen.height - padding;
+          const modelAspect = model.width / model.height;
+          const windowAspect = maxWidth / maxHeight;
 
-        // Add hit area interaction
-        model.on('pointerdown', (event: any) => {
-        // Get the click position in world space
-        const worldX = event.data.global.x;
-        const worldY = event.data.global.y;
-
-        // Convert the click position to model space
-        const modelPosition = model.toModelPosition({ x: worldX, y: worldY });
-
-        // Log the position in model space
-        console.log("Model Position:", modelPosition);
-          console.log("hitt",model.hitTest(event.data.global.x, event.data.global.y));
-          console.log("event",event);
-          console.log("model",model.internalModel.hitTest(event.data.global.x, event.data.global.y));
-          console.log(event.data.global.x, event.data.global.y);
-          const hairTyoes = ["WhiteHairBraids","BlackBraids","WhiteHair","WhitePonytail","Hat"];
-          const facials = ["Cry","Anger","Love","Red","No"];
-          const acts = ["Game","Game"," Game","EatEat","Bear","PenFingers"];
-          const setting = ["Pillow","Box","Coat"];
-          const all_expressions = [...hairTyoes, ...facials, ...acts, ...setting];
-          const select_random_expression = all_expressions[Math.floor(Math.random() * all_expressions.length)];
-          const all_motions = ["Sleep","Eat"];
-          const select_random_motion = all_motions[Math.floor(Math.random() * all_motions.length)];
-          const motion_or_expression = Math.random() < 0.5 ? "expression" : "motion";
-          if (motion_or_expression === "expression") {
-            console.log("select_random_expression",select_random_expression);
-            model.expression(select_random_expression);
+          let scale = 1;
+          if (modelAspect > windowAspect) {
+            scale = maxWidth / model.width;
           } else {
-            console.log("select_random_motion",select_random_motion);
-            // model.motion(select_random_motion);
+            scale = maxHeight / model.height;
           }
-          
 
-        });
+          return scale * 1.25;
+        };
+
+        // Initial setup
+        const initialScale = calculateScale();
+        const initialPosition = calculatePosition();
+        model.scale.set(initialScale);
+        model.anchor.set(0.5);
+        model.position.set(initialPosition.x, initialPosition.y);
+        model.interactive = true;
 
         app.stage.addChild(model);
 
+        // Resize handler
         const onResize = () => {
-          model.position.set(app.screen.width/2, app.screen.height/2);
-          app.renderer.resize(window.outerWidth, window.outerHeight);
-         
+          const newScale = calculateScale();
+          const newPosition = calculatePosition();
+          
+          model.scale.set(newScale);
+          model.position.set(newPosition.x, newPosition.y);
         };
 
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
+
       } catch (e) {
         console.error('Failed to load model:', e);
-      }
-    };
-
-    const triggerMotionOrExpression = (hitArea: string) => {
-      const model = modelRef.current;
-      if (!model) return;
-
-      switch (hitArea) {
-        case 'Head':
-          model.motion('Sleep'); // Trigger a motion
-          break;
-        case 'Body':
-          model.expression('Happy'); // Trigger an expression
-          break;
-        case 'Arm':
-          model.motion('Wave'); // Trigger another motion
-          break;
-        default:
-          console.warn('Unknown hit area:', hitArea);
       }
     };
 
