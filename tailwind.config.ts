@@ -25,6 +25,16 @@ export default {
         'dark-pastel-coral': '#FF8C94', // Pastel coral
         'dark-pastel-charcoal': '#2C2C3C', // Dark charcoal
       },
+      keyframes: {
+        pulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' },
+        },
+      },
+      animation: {
+        pulse: 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+
     },
   },
   plugins: [],

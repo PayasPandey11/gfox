@@ -13,9 +13,56 @@ export default function NikoPage() {
   
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([]);
   const ai = useRef(new OpenRouter());
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
+  // Initialize Speech Recognition
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false; // Stop after one sentence
+      recognitionRef.current.interimResults = false; // Only final results
+      recognitionRef.current.lang = 'en-US'; // Set language
+
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript); // Set the input to the recognized text
+        setIsListening(false); // Stop listening after result
+
+        // Auto-submit the message
+        handleSubmit({ preventDefault: () => {} } as React.FormEvent);
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    } else {
+      console.warn('Speech Recognition not supported in this browser.');
+    }
+  }, []);
+
+  // Toggle speech recognition
+  const toggleSpeechToText = () => {
+    if (recognitionRef.current) {
+      if (!isListening) {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } else {
+        recognitionRef.current.stop();
+        setIsListening(false);
+      }
+    }
+  };
+
+  // Scroll to bottom when new messages are added
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -123,11 +170,30 @@ export default function NikoPage() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="w-full p-3 pl-4 pr-12 rounded-lg bg-dark-pastel-muted/70 backdrop-blur-sm text-dark-pastel-text placeholder-dark-pastel-text/50 border border-dark-pastel-border/30 focus:outline-none focus:ring-2 focus:ring-dark-pastel-sky/50 focus:border-dark-pastel-sky transition-all shadow-sm font-medium"
+              className="w-full p-3 pl-4 pr-20 rounded-lg bg-dark-pastel-muted/70 backdrop-blur-sm text-dark-pastel-text placeholder-dark-pastel-text/50 border border-dark-pastel-border/30 focus:outline-none focus:ring-2 focus:ring-dark-pastel-sky/50 focus:border-dark-pastel-sky transition-all shadow-sm font-medium"
               placeholder="Type a message..."
               disabled={isLoading}
               ref={inputRef}
             />
+            <button
+              type="button"
+              onClick={toggleSpeechToText}
+              className={`absolute right-12 top-1/2 -translate-y-1/2 p-2 rounded-lg ${
+                isListening
+                  ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                  : 'bg-dark-pastel-peach hover:bg-dark-pastel-coral'
+              } transition-all duration-200 shadow-sm`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-dark-pastel-charcoal"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 2a3 3 0 00-3 3v6a3 3 0 006 0V5a3 3 0 00-3-3z" />
+                <path d="M19 10v1a7 7 0 01-14 0v-1a1 1 0 00-2 0v1a9 9 0 008 8.94V21H9a1 1 0 000 2h6a1 1 0 000-2h-2v-1.06A9 9 0 0021 11v-1a1 1 0 00-2 0z" />
+              </svg>
+            </button>
             <button
               type="submit"
               disabled={isLoading}
