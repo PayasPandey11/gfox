@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { OpenRouter } from '@/app/openrouter';
 import Live2DScripts from '@/components/Live2DScripts';
 import useLive2DModel from '@/hooks/useLive2DModel';
+import { textToSpeech } from '@/app/utils/tts'; // Import the TTS utility
 
 export default function NikoPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -23,16 +24,14 @@ export default function NikoPage() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false; // Stop after one sentence
-      recognitionRef.current.interimResults = false; // Only final results
-      recognitionRef.current.lang = 'en-US'; // Set language
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'en-US';
 
       recognitionRef.current.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
-        setInput(transcript); // Set the input to the recognized text
-        setIsListening(false); // Stop listening after result
-
-        // Auto-submit the message
+        setInput(transcript);
+        setIsListening(false);
         handleSubmit({ preventDefault: () => {} } as React.FormEvent);
       };
 
@@ -86,6 +85,9 @@ export default function NikoPage() {
 
         const response = await ai.current.getResponse(userMessage, conversationHistory);
         setMessages((prev) => [...prev, { text: response, isUser: false }]);
+
+        // Use ElevenLabs TTS to read the AI's response
+        await textToSpeech(response);
       } catch (error) {
         console.error('Failed to get AI response:', error);
         setMessages((prev) => [
